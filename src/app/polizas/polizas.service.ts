@@ -28,14 +28,4 @@ export class PolizasService {
         const url = `${this.apiUrl}/${poliza.id}`;
         return this.http.delete<void>(url);
     }
-
-    /*agregarCobertura(polizaCobertura: PolizasCoberturas): Observable<void> {
-        const url = `${this.apiUrl}/${polizaCobertura.polizaId}/coberturas`;
-        return this.http.post<void>(url, polizaCobertura);
-    }
-
-    borrarCobertura(polizaCobertura: PolizasCoberturas): Observable<void> {
-        const url = `${this.apiUrl}/${polizaCobertura.polizaId}/coberturas/${polizaCobertura.id}`;
-        return this.http.delete<void>(url);
-    }*/
 }

@@ -1,11 +1,15 @@
 export class Cobertura {
-    id: number;
-    nombre: string;
+    coberturaId: number;
+    coberturaNombre: string;
+    montoAsegurado: number;
+    polizasCoberturas: [];
     selected: boolean;
 
     constructor() {
-        this.id = 0;
-        this.nombre = '';
+        this.coberturaId = 0;
+        this.coberturaNombre = '';
+        this.montoAsegurado = 0;
+        this.polizasCoberturas = [];
         this.selected = false;
     }
 }

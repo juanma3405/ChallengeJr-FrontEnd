@@ -1,9 +1,38 @@
-<h2>Crear Cobertura</h2>
+<div class = "coberturas">
+  <h1>Coberturas</h1>
+  <!-- crear una nueva cobertura -->
+  <div>
+    <h4>Crear cobertura</h4>
+    <form (submit)="crearCobertura()">
+      <label>Nombre:</label>
+      <input type="text" [(ngModel)]="nuevaCobertura.coberturaNombre" name="nombre">
+      <button type="submit">Crear Cobertura</button>
+    </form>
+  </div>
 
-<!-- Formulario para crear una nueva cobertura 
-<form (submit)="crearCobertura()">
-  <label>Nombre:</label>
-  <input type="text" [(ngModel)]="nuevaCobertura.nombre" name="nombre">
-  <button type="submit">Crear Cobertura</button>
-</form>
--->
+  <h3>Lista de Coberturas</h3>
+    <ul>
+      <li *ngFor="let cobertura of coberturas">
+        <div>
+          {{ cobertura.coberturaNombre }} 
+          <button (click)="editarCobertura(cobertura)">Editar</button>
+          <button (click)="borrarCobertura(cobertura)">Borrar</button>
+        </div>
+      </li>        
+    </ul>
+</div>
+
+<!--Editar Cobertura-->
+  <div *ngIf="coberturaParaEditar">
+    <h3> Editar Cobertura</h3>
+    <form (submit)="actualizarCobertura()">
+      <label>Nombre de la cobertura: 
+        <input type="text" [(ngModel)]="coberturaSeleccionada.coberturaNombre" name="nombre">
+      </label>
+      <button type="submit">
+        Actualizar
+      </button>
+    </form>
+  </div>
+
+

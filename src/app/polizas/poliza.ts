@@ -1,30 +1,21 @@
+import { Cobertura } from '../coberturas/cobertura';
+
 export class Poliza {
     id: number;
     nombre: string;
+    polizasCoberturas: Cobertura[];
     montoTotal: number;
-    polizasCoberturas: [
-        {
-            idPolizaCobertura: number,
-            coberturaId: number,
-            coberturaNombre: string,
-            montoAsegurado: number
-        }
-    ];
-
+    selectedVer: boolean;
+    selectedActualizar: boolean;
+    selectedAgregar: boolean;
 
     constructor() {
         this.id = 0;
         this.nombre = '';
         this.montoTotal = 0;
-        this.polizasCoberturas = [
-            {
-                idPolizaCobertura: 0,
-                coberturaId: 0,
-                coberturaNombre: '',
-                montoAsegurado: 0
-            }
-        ];
-
-
+        this.polizasCoberturas = [];
+        this.selectedVer = false;
+        this.selectedActualizar = false
+        this.selectedAgregar = false;
     }
 }

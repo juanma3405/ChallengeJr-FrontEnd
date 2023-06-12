@@ -1,5 +1,4 @@
-
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Cobertura } from '../coberturas/cobertura';
 import { CoberturasService } from '../coberturas/coberturas.service';
 
@@ -8,46 +7,53 @@ import { CoberturasService } from '../coberturas/coberturas.service';
     templateUrl: './coberturas.component.html',
     styleUrls: ['./coberturas.component.css']
 })
-export class CoberturasComponent {
-    //nuevaCobertura: Cobertura;
-    //coberturas: Cobertura[];
+export class CoberturasComponent implements OnInit {
+    nuevaCobertura: Cobertura;
+    coberturas: Cobertura[];
+    coberturaSeleccionada: Cobertura;
+    coberturaParaEditar: boolean;
 
     constructor(private coberturasService: CoberturasService) {
-        //this.nuevaCobertura = new Cobertura();
-        //this.coberturas = [];
+        this.nuevaCobertura = new Cobertura();
+        this.coberturas = [];
+        this.coberturaSeleccionada = new Cobertura;
+        this.coberturaParaEditar = false;
     }
 
-    /*crearCobertura() {
+    ngOnInit() {
+        this.obtenerCoberturas();
+    }
+
+    obtenerCoberturas(): void {
+        this.coberturasService.obtenerCoberturas().subscribe(coberturas => {
+            this.coberturas = coberturas;
+        });
+    }
+
+    crearCobertura() {
         this.coberturasService.crearCobertura(this.nuevaCobertura).subscribe(() => {
-            // Cobertura creada exitosamente, puedes realizar alguna acción adicional si es necesario
-            console.log('Cobertura creada exitosamente');
-            this.nuevaCobertura = new Cobertura();
-        }, error => {
-            // Ocurrió un error al crear la cobertura, puedes manejar el error según tus necesidades
-            console.error('Error al crear la cobertura', error);
-        });
-    }*/
-
-    /*agregarCobertura() {
-        const nuevaPolizaCobertura: PolizasCoberturas = {
-            id: 0,
-            polizaId: this.polizaSeleccionada.id,
-            coberturaId: this.nuevaCoberturaId,
-            poliza: null,
-            cobertura: null,
-            montoAsegurado: this.nuevoMontoAsegurado
-        };
-
-        this.polizasService.agregarCobertura(nuevaPolizaCobertura).subscribe(() => {
-            this.obtenerPolizas();
-            this.nuevaCoberturaId = 0;
-            this.nuevoMontoAsegurado = 0;
-        });
-    }
-
-    borrarCobertura(this.nuevaCobertura) {
-        this.coberturasService.borrarCobertura(nuevaCobertura).subscribe(() => {
             this.obtenerCoberturas();
         });
-    }*/
+        this.nuevaCobertura = new Cobertura
+    }
+
+    editarCobertura(cobertura: Cobertura) {
+        this.coberturaSeleccionada = new Cobertura;
+        this.coberturaSeleccionada = cobertura;
+        this.coberturaParaEditar = !this.coberturaParaEditar
+    }
+
+    actualizarCobertura() {
+        this.coberturasService.actualizarCobertura(this.coberturaSeleccionada).subscribe(() => {
+            this.coberturaSeleccionada = new Cobertura;
+            this.obtenerCoberturas();
+        });
+        this.coberturaParaEditar = !this.coberturaParaEditar
+    }
+
+    borrarCobertura(cobertura: Cobertura) {
+        this.coberturasService.borrarCobertura(cobertura).subscribe(() => {
+            this.obtenerCoberturas();
+        });
+    }
 }

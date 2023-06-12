@@ -1,4 +1,8 @@
 /* Estilos para el componente de creación de coberturas */
+.coberturas{
+  margin: 10px;
+  margin-left: 50px;
+}
 h2 {
   color: #333;
 }

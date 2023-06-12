@@ -1,60 +1,93 @@
-<h2>Maestro de Pólizas</h2>
-
-<!-- Formulario para crear una nueva póliza --> 
-<form (submit)="crearPoliza()">
-  <label>Nombre de la Póliza:</label>
-  <input type="text" [(ngModel)]="nuevaPoliza.nombre" name="nombre">
-  <div class="dropdown">
-  <button class="dropdown-toggle" (click)="toggleDropdown()">Seleccionar elementos</button>
-  <ul class="dropdown-menu" [class.show]="isDropdownOpen">
-    <li *ngFor="let cobertura of coberturas">
-      <label>
-        <input type="checkbox" [(ngModel)]="cobertura.selected" (change)="cambioDeSeleccion()">
-        {{ cobertura.nombre }}
+<div class="poliza">
+  <h1>Polizas</h1>
+  <div  *ngIf="mostrarCrearPoliza != true">
+  <h3>Crear nueva Poliza</h3>
+  <button (click)="mostrarFormulario()">Crear Poliza</button> 
+  </div>
+  <!--Crear Poliza-->
+  <div class="crear-poliza" *ngIf="mostrarCrearPoliza == true">
+    <form>
+      <label>Nombre de la Póliza: 
+        <input type="text" [(ngModel)]="nuevaPoliza.nombre" name="nombre">
       </label>
+      <div> Agregar Coberturas a Poliza:</div>
+        <ul>
+          <li *ngFor="let cobertura of coberturas">
+            <label>{{ cobertura.coberturaNombre }}
+              <input type="number" [(ngModel)]="cobertura.montoAsegurado" name="montoAsegurado">
+            </label>            
+          </li>
+        </ul>  
+        <button type="submit" (click)="crearPoliza(nuevaPoliza)">
+          Crear
+        </button>
+        <button type="submit" (click)="volver()">
+          Volver
+        </button>
+
+
+      
+    </form>
+  </div>
+
+  <!-- Listado de pólizas -->
+  <h3>Lista de Polizas</h3>
+  <ul *ngFor="let poliza of polizas">
+    <li>
+      - {{ poliza.nombre }}
+      <button (click)="verPoliza(poliza)">Ver</button>      
+      <div *ngIf="poliza.selectedVer" class="coberturas-poliza">
+        <div>Coberturas de la poliza:</div>
+        <ul>
+          <li *ngFor="let cobertura of poliza.polizasCoberturas">
+            <div>- Nombre: {{ cobertura.coberturaNombre }} - ${{ cobertura.montoAsegurado }}</div>
+          </li>        
+        </ul>
+        <div>Monto Total: ${{ poliza.montoTotal }}</div>
+        <button (click)="editarPoliza(poliza)">Editar Poliza</button>
+        <button (click)="initAgrerarCoberturasAPoliza(poliza)">Agregar coberturas</button>
+        <button (click)="borrarPoliza(poliza)">Borrar Poliza</button>              
+      </div>
     </li>
   </ul>
+
+  <!--Editar Poliza-->
+  <div class="editar-poliza" *ngIf="polizaSeleccionada.selectedActualizar">
+    <h3> Editar Poliza</h3>
+    <form>
+      <label>Nombre de la Póliza: 
+        <input type="text" [(ngModel)]="polizaSeleccionada.nombre" name="nombre">
+      </label>
+      <div>Coberturas de la poliza:</div>
+      <div>(seleccionar las que desea borrar)</div>
+      <ul>
+        <li *ngFor="let cobertura of polizaSeleccionada.polizasCoberturas">
+          <label>
+            <input type="checkbox" [(ngModel)]="cobertura.selected" [value]="cobertura.selected ? true : false"> 
+            {{ cobertura.coberturaNombre }}            
+            <input type="number" [(ngModel)]="cobertura.montoAsegurado" name="montoAsegurado">
+          </label>            
+        </li>
+      </ul>           
+      <button type="submit" (click)="actualizarPoliza(polizaSeleccionada)">
+        Actualizar
+      </button>
+    </form>
+  </div>
+
+  <!--Agregar Cobertura a Poliza-->
+  <div class="agregar-cobertura" *ngIf="polizaSeleccionada.selectedAgregar">
+    <h3> Agregar Coberturas a Poliza</h3>
+    <form >
+      <ul>
+        <li *ngFor="let cobertura of coberturasAAgregrar">
+          <label>{{ cobertura.coberturaNombre }} </label> 
+          <input type="number" [(ngModel)]="cobertura.montoAsegurado" name="montoAsegurado">           
+        </li>
+      </ul>           
+      <button type="submit" (click)="agregarCoberturas(polizaSeleccionada)">
+        Agregar Coberturas
+      </button>
+    </form>
+  </div>
 </div>
-  <button type="submit">Crear Póliza</button>
-</form>
-
-<!-- Listado de pólizas -->
-<ul *ngFor="let poliza of polizas">
-  <li>
-    {{ poliza.nombre }}
-    <button (click)="editarPoliza(poliza)">Editar</button>
-    <button (click)="borrarPoliza(poliza)">Borrar</button>
-  </li>
-</ul>
-
-<!-- Detalle de la póliza seleccionada -->
-<div *ngIf="polizaSeleccionada">
-  <h3>Detalle de la Póliza: {{ polizaSeleccionada.nombre }}</h3>
-
-  <!--Formulario para editar la póliza seleccionada-->
-  <form (submit)="actualizarPoliza()">
-    <label>Nombre de la Póliza:</label>
-    <input type="text" [(ngModel)]="polizaSeleccionada.nombre" name="nombre">
-    <button type="submit">Actualizar Póliza</button>
-  </form>
-
-  <!-- Formulario para agregar una cobertura a la póliza -->
-  <!--h4>Agregar Cobertura:</h4>
-  <form (submit)="agregarCobertura()">
-    <label>Cobertura:</label>
-    <select [(ngModel)]="nuevaCoberturaId" name="coberturaId">
-      <option *ngFor="let cobertura of coberturas" [value]="cobertura.id">{{ cobertura.nombre }}</option>
-    </select>
-    <label>Monto Asegurado:</label>
-    <input type="number" [(ngModel)]="nuevoMontoAsegurado" name="montoAsegurado">
-    <button type="submit">Agregar Cobertura</button>
-  </form>
-
-  <!--Listado de coberturas de la póliza
-  <ul>
-    <li *ngFor="let cobertura of polizaSeleccionada.polizasCoberturas">
-      {{ cobertura.cobertura.nombre }} - Monto Asegurado: {{ cobertura.montoAsegurado }}
-      <button (click)="borrarCobertura(cobertura)">Borrar</button>
-    </li>
-  </ul>
-</div-->

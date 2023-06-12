@@ -3,7 +3,7 @@ import { Poliza } from '../polizas/poliza';
 import { PolizasService } from '../polizas/polizas.service';
 import { Cobertura } from '../coberturas/cobertura';
 import { CoberturasService } from '../coberturas/coberturas.service';
-
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-polizas',
@@ -15,15 +15,18 @@ export class PolizasComponent implements OnInit {
     polizaSeleccionada: Poliza;
     nuevaPoliza: Poliza;
     coberturas: Cobertura[];
+    coberturasAAgregrar: Cobertura[];
     nuevoMontoAsegurado: number;
-    isDropdownOpen = false;
+    mostrarCrearPoliza: boolean;
 
-    constructor(private polizasService: PolizasService, private coberturasService: CoberturasService) {
+    constructor(private polizasService: PolizasService, private coberturasService: CoberturasService, private router: Router) {
         this.polizas = [];
         this.polizaSeleccionada = new Poliza();
         this.nuevaPoliza = new Poliza();
         this.coberturas = [];
+        this.coberturasAAgregrar = [];
         this.nuevoMontoAsegurado = 0;
+        this.mostrarCrearPoliza = false;
     }
 
     ngOnInit() {
@@ -34,27 +37,58 @@ export class PolizasComponent implements OnInit {
     obtenerPolizas(): void {
         this.polizasService.obtenerPolizas().subscribe(polizas => {
             this.polizas = polizas;
-
         });
-        console.log(this.polizas);
     }
 
-    crearPoliza() {
-        this.polizasService.crearPoliza(this.nuevaPoliza).subscribe(poliza => { //tiene que ser this.nuevaPoliza?
-            this.polizas.push(poliza); //esto puede que no sea asi, chequear
-            this.nuevaPoliza = new Poliza();
+    obtenerCoberturas(): void {
+        this.coberturasService.obtenerCoberturas().subscribe(coberturas => {
+            this.coberturas = coberturas;
         });
+    }
+
+    verPoliza(poliza: Poliza) {
+        poliza.selectedVer = !poliza.selectedVer;
     }
 
     editarPoliza(poliza: Poliza) {
+        this.polizaSeleccionada = new Poliza;
         this.polizaSeleccionada = poliza;
+        this.polizaSeleccionada.selectedActualizar = !this.polizaSeleccionada.selectedActualizar;
     }
 
-    actualizarPoliza() {
-        this.polizasService.actualizarPoliza(this.polizaSeleccionada).subscribe(() => {
-            this.polizaSeleccionada = new Poliza();
+    actualizarPoliza(polizaSeleccionada: Poliza) {
+        polizaSeleccionada.polizasCoberturas = polizaSeleccionada.polizasCoberturas.filter(cobertura => !cobertura.selected);
+        polizaSeleccionada.polizasCoberturas.forEach(cobertura => {
+            polizaSeleccionada.montoTotal += cobertura.montoAsegurado;
+        });
+        this.polizasService.actualizarPoliza(polizaSeleccionada).subscribe(() => {
             this.obtenerPolizas();
         });
+        this.polizaSeleccionada = new Poliza;
+    }
+
+    initAgrerarCoberturasAPoliza(poliza: Poliza) {
+        this.polizaSeleccionada = poliza;
+        this.polizaSeleccionada.selectedAgregar = !this.polizaSeleccionada.selectedAgregar;
+        this.coberturasAAgregrar = this.coberturas.filter(cobertura =>
+            !this.polizaSeleccionada.polizasCoberturas
+                .some(c => c.coberturaId === cobertura.coberturaId));
+    }
+
+    agregarCoberturas(polizaSeleccionada: Poliza) {
+        const coberturasFiltradas = this.coberturasAAgregrar.filter(cobertura =>
+            cobertura.montoAsegurado > 0 && !polizaSeleccionada.polizasCoberturas.some(c => c.coberturaId === cobertura.coberturaId)
+        );
+
+        coberturasFiltradas.forEach(cobertura => {
+            polizaSeleccionada.polizasCoberturas.push(cobertura);
+            polizaSeleccionada.montoTotal += cobertura.montoAsegurado
+        });
+
+        this.polizasService.actualizarPoliza(polizaSeleccionada).subscribe(() => {
+            this.obtenerPolizas();
+        });
+        this.polizaSeleccionada = new Poliza()
     }
 
     borrarPoliza(poliza: Poliza) {
@@ -63,20 +97,26 @@ export class PolizasComponent implements OnInit {
         });
     }
 
-    obtenerCoberturas(): void {
-        this.coberturasService.obtenerCoberturas().subscribe(coberturas => {
-            this.coberturas = coberturas;
+    mostrarFormulario() {
+        this.mostrarCrearPoliza = !this.mostrarCrearPoliza
+    }
 
+    crearPoliza(nuevaPoliza: Poliza) {
+
+        this.polizasService.crearPoliza(nuevaPoliza).subscribe(() => {
+            this.obtenerPolizas();
         });
-        console.log(this.coberturas);
+        this.mostrarCrearPoliza = !this.mostrarCrearPoliza;
     }
 
-    toggleDropdown() {
-        this.isDropdownOpen = !this.isDropdownOpen;
+    volver() {
+        this.reloadComponent();
     }
 
-    cambioDeSeleccion() {
-        console.log(this.coberturas.filter(cobertura => cobertura.selected));
+    reloadComponent() {
+        const currentUrl = this.router.url;
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+            this.router.navigateByUrl(currentUrl);
+        });
     }
-
 }
