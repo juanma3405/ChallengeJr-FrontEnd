@@ -1,0 +1,60 @@
+<h2>Maestro de Pólizas</h2>
+
+<!-- Formulario para crear una nueva póliza --> 
+<form (submit)="crearPoliza()">
+  <label>Nombre de la Póliza:</label>
+  <input type="text" [(ngModel)]="nuevaPoliza.nombre" name="nombre">
+  <div class="dropdown">
+  <button class="dropdown-toggle" (click)="toggleDropdown()">Seleccionar elementos</button>
+  <ul class="dropdown-menu" [class.show]="isDropdownOpen">
+    <li *ngFor="let cobertura of coberturas">
+      <label>
+        <input type="checkbox" [(ngModel)]="cobertura.selected" (change)="cambioDeSeleccion()">
+        {{ cobertura.nombre }}
+      </label>
+    </li>
+  </ul>
+</div>
+  <button type="submit">Crear Póliza</button>
+</form>
+
+<!-- Listado de pólizas -->
+<ul *ngFor="let poliza of polizas">
+  <li>
+    {{ poliza.nombre }}
+    <button (click)="editarPoliza(poliza)">Editar</button>
+    <button (click)="borrarPoliza(poliza)">Borrar</button>
+  </li>
+</ul>
+
+<!-- Detalle de la póliza seleccionada -->
+<div *ngIf="polizaSeleccionada">
+  <h3>Detalle de la Póliza: {{ polizaSeleccionada.nombre }}</h3>
+
+  <!--Formulario para editar la póliza seleccionada-->
+  <form (submit)="actualizarPoliza()">
+    <label>Nombre de la Póliza:</label>
+    <input type="text" [(ngModel)]="polizaSeleccionada.nombre" name="nombre">
+    <button type="submit">Actualizar Póliza</button>
+  </form>
+
+  <!-- Formulario para agregar una cobertura a la póliza -->
+  <!--h4>Agregar Cobertura:</h4>
+  <form (submit)="agregarCobertura()">
+    <label>Cobertura:</label>
+    <select [(ngModel)]="nuevaCoberturaId" name="coberturaId">
+      <option *ngFor="let cobertura of coberturas" [value]="cobertura.id">{{ cobertura.nombre }}</option>
+    </select>
+    <label>Monto Asegurado:</label>
+    <input type="number" [(ngModel)]="nuevoMontoAsegurado" name="montoAsegurado">
+    <button type="submit">Agregar Cobertura</button>
+  </form>
+
+  <!--Listado de coberturas de la póliza
+  <ul>
+    <li *ngFor="let cobertura of polizaSeleccionada.polizasCoberturas">
+      {{ cobertura.cobertura.nombre }} - Monto Asegurado: {{ cobertura.montoAsegurado }}
+      <button (click)="borrarCobertura(cobertura)">Borrar</button>
+    </li>
+  </ul>
+</div-->

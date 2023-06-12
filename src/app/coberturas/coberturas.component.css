@@ -1,0 +1,17 @@
+/* Estilos para el componente de creación de coberturas */
+h2 {
+  color: #333;
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+button {
+  margin-top: 5px;
+}
